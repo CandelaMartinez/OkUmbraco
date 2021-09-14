@@ -1,0 +1,10 @@
+﻿@inherits Umbraco.Web.Macros.PartialViewMacroPage
+@{
+//variable del tipo de parametro que cree en get latest tweets en macros: twitterHandle
+    var twitterHandle = Model.MacroParameters["twitterHandle"] as string           ;
+}
+
+
+<!--codigo traido de publish twitter para poder publicar mis tweets-->
+<a class="twitter-timeline" href="https://twitter.com/@twitterHandle?ref_src=twsrc%5Etfw">Tweets by @twitterHandle</a> 
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>

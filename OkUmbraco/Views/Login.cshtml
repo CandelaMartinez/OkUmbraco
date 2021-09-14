@@ -1,0 +1,7 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<ContentModels.Login>
+	@using ContentModels = Umbraco.Web.PublishedModels;
+	@{
+	Layout = "Main.cshtml";
+	}
+	@*login controller, renderLogin action*@
+	@Html.Action("RenderLogin", "Login")

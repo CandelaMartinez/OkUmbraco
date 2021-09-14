@@ -1,0 +1,70 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+
+@using Umbraco.Core.PropertyEditors.ValueConverters;
+
+<!--News Articles-->
+<!--query-->
+@{
+	var latestNews = Umbraco.Content(Guid.Parse("ba54f93d-691a-481e-88ea-1f7f8e966852"))
+    .ChildrenOfType("newsArticle")
+    .Where(x => x.IsVisible())
+    .OrderBy(x => x.CreateDate)
+    .Take(3);
+}
+
+<h1>Ultimas noticias</h1>
+
+<!--container para todos los cards-->
+<div class= "container">
+    <div class="row">
+        <div class="col">
+            <dic class="card-deck">
+                
+                <!--creo un card por cada news item-->
+                @foreach (var item in latestNews)
+                {
+                
+                    <!--traigo la image cropper, importo value convertors-->
+                    var imgCropper = item.Value<ImageCropperValue>("articleImage");
+                    <!--accedo a la imagen Thumb-->
+                    var thumbUrl = imgCropper.Src + imgCropper.GetCropUrl("Thumb");
+                    
+                    
+                    
+                     <!-- codigo traido de bootstrap card-->
+                    <div class="card" style="width: 18rem;">
+                        <img class="card-img-top" src="@thumbUrl" alt="Card image cap">
+                         <div class="card-body">
+                            <h5 class="card-title">@item.Name</h5>
+                            <p class="card-text">@item.Value("LeadIn")</p>
+                            
+                         </div>
+                         
+                         <div class= "card-footer d-flex justify-content-between">
+                             <div>
+                                 <a href="@item.Url">Leer mas..</a>
+                             </div>
+                             <div class= "social-icons text-muted">
+                                 <a class= "ml-2 mr-2" href="https://twitter.com/intent/tweet?text=@item.Value("leadIn")&amp;url=@item.Url(null,UrlMode.Absolute)">
+                                 <i class="fab fa-twitter"></i>
+                                 </a>
+                                 
+                                  <a class="ml-2 mr-2" href="https://www.facebook.com/sharer.php?u=@item.Url(null, UrlMode.Absolute)">
+                                 <i class="fab fa-facebook"></i>
+                                 </a>
+                                 
+                                  <a class="ml-2 mr-2" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=@item.Url(null, UrlMode.Absolute)">
+                                 <i class="fab fa-linkedin"></i>
+                                 </a>
+                                 
+                             </div>
+                             
+                             
+                         </div>
+                    </div>
+                }
+                
+            </dic>
+        </div>
+    </div>
+</div>

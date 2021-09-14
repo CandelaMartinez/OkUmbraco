@@ -1,0 +1,43 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<ContentModels.Home>
+@using ContentModels = Umbraco.Web.PublishedModels;
+
+@{
+    Layout = "main.cshtml";
+}
+
+
+<!--hero-->
+@Html.Partial("Hero")
+
+
+<!--call to action-->
+@Html.Partial("Call to Action")
+
+<!--latest news card-->
+<div class="container">
+    <div class="row">
+        <div class="col">
+            @Html.Partial("Latest News")
+        </div>
+    </div>
+</div>
+
+<!--inject Macro latest tweets, render my macro: insert macro y le paso el parametro de mi pagina de twitter--!>
+<!--en un bootstrap col-->
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            @*hago que umbraco use el controlador que yo cree*@
+            @Html.Action("GetTweets", "Twitter", new {twitterHandle= "MariaCandelaMa3" })
+
+            @Umbraco.RenderMacro("GetLatestTweets", new {twitterHandle="MariaCandelaMa3"})
+        </div>
+    </div>
+</div>
+
+
+
+
+
+

@@ -1,0 +1,7 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<ContentModels.MyAccount>
+@using ContentModels = Umbraco.Web.PublishedModels;
+@{
+	Layout = "Main.cshtml";
+}
+
+@Html.Action("RenderMyAccount", "Account")

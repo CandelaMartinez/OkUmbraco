@@ -1,0 +1,93 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage
+@using ClientDependency.Core.Mvc
+@{
+    Layout = null;
+
+    var homePage = Model.AncestorOrSelf<Home>();
+
+    //var homePage = Umbraco.ContentAtRoot().DescendantsOrSelfOfType("Home").FirstOrDefault();
+}
+<html>
+<head>
+    <!-- Scripts, css que traigo de las web-->
+    @{
+        Html.RequiresCss("https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css", new
+        {
+            integrity = "sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm",
+            crossorigin = "anonymous"
+        });
+        Html.RequiresCss("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css");
+
+        //referencia a mi pagina css de cookie consent que cree
+        Html.RequiresCss("/css/CookieConsent.css");
+
+        Html.RequiresCss("/css/RTE.css");
+
+        Html.RequiresJs("https://code.jquery.com/jquery-3.2.1.slim.min.js",
+        new
+        {
+            integrity = "sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN",
+            crossorigin = "anonymous"
+        });
+
+        Html.RequiresJs("https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js",
+        new
+        {
+            integrity = "sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q",
+            crossorigin = "anonymous"
+        });
+
+
+        Html.RequiresJs("https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js",
+            new
+            {
+                integrity = "sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl",
+                crossorigin = "anonymous"
+            });
+
+        Html.RequiresJs("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/js/all.min.js");
+
+
+        <!--no se porque no funciona, debe ser una referencia antigua-->
+        Html.RequiresJs("https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.min.js");
+
+        Html.RequiresJs("https://cdnjs.cloudflare.com/ajax/libs/jquery-validate-unobtrusive/3.2.11/jquery.validate.unobtrusive.min.js");
+
+
+        //referencia a mi pagina css de cookie consent que cree
+        Html.RequiresJs("/scripts/CookieConsent.js");
+    }
+
+    <!--aqui va el css-->
+    @Html.RenderCssHere()
+
+    <!--allows me to render the head section of news articles-->
+    @RenderSection("head",false)
+</head>
+<body>
+
+    <!-- aqui va el navegador -->
+    @Html.Partial("NavBar")
+
+    @RenderBody()
+
+
+    <!-- aqui va el Footer -->
+    @Html.Partial("Footer")
+
+    <!-- aqui va el Cookie Consent, codigo que me traigo de la web de donde saque el cookie consent -->
+    <div class="alert alert-dismissible text-center cookiealert" role="alert">
+        <div class="cookiealert-container">
+            <b>Do you like cookies?</b> &#x1F36A; We use cookies to ensure you get the best experience on our website. <a href="http://cookiesandyou.com/" target="_blank">Learn more</a>
+
+            <button type="button" class="btn btn-primary btn-sm acceptcookies" aria-label="Close">
+                I agree
+            </button>
+        </div>
+    </div>
+
+    <!--aqui va el js-->
+    @Html.RenderJsHere()
+
+</body>
+</html>

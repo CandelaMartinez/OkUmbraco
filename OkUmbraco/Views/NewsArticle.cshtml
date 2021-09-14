@@ -1,0 +1,144 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<ContentModels.NewsArticle>
+@using ContentModels = Umbraco.Web.PublishedModels;
+@using Umbraco.Core.PropertyEditors.ValueConverters;
+@{
+    Layout = "Main.cshtml";
+
+    var imgCropper = Model.Value<ImageCropperValue>("articleImage");
+    var imgUrl = imgCropper.Src + imgCropper.GetCropUrl("Main");
+
+    var articleUrl = Model.Url(null, UrlMode.Absolute);
+    
+    var relatedArticles = Model.Value<IList<IPublishedContent>>("articleRelatedContent");
+}
+
+<article class="container">
+    <header class="text-center">
+        <div class="row">
+            <div class="col">
+                <h1 class="title-2 mt-5">@Model.Name</h1>
+                <div class="meta mb-5">
+                    <ul class="list-unstyled list-inline">
+                        <li class="list-inline-item">
+                            <i class="fa fa-user"></i> by @Model.Author
+                        </li>
+
+                        <li class="list-inline-item">
+                            <i class="fa fa-calendar"></i> @Model.PostDate.ToString("dd-MMM-yyyy HH:mm")
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <p class="lead-in">
+                    @Model.LeadIn
+                </p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <img src="@imgUrl" class="w-100" />
+            </div>
+        </div>
+    
+    </header>
+
+    <div class="row">
+        <div class="col">
+            @Model.ArticleContent
+        </div>
+    </div>
+
+    <footer class="border d-flex flex-column flex-md-row justify-content-between mt-5 mb-5">
+        <div class="d-flex align-item-center px-4">
+            <div class="d-flex flex-column">
+                <div class="d-flex"><span>Author: <strong>@Model.Author</strong></span></div>
+                <div class="d-flex"><span>Categories: @string.Join(",", Model.NewsCategories) </span></div>
+            </div>
+        </div>
+
+        <div class="d-flex align-item-center px-4">
+            <span>Share this article</span>
+            <div class="btn--socialsquare btn btn-outline-primary m-2">
+                <a class="ml-2 mr-2" href="https://twitter.com/intent/tweet?text=@Model.Name¬amp;url=@articleUrl"> <i class="fab fa-twitter"></i></a>
+            </div>
+
+            <div class="btn--socialsquare btn btn-outline-primary m-2">
+                <a class="ml-2 mr-2" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=@articleUrl"> <i class="fab fa-linkedin"></i></a>
+            </div>
+
+            <div class="btn--socialsquare btn btn-outline-primary m-2">
+                <a class="ml-2 mr-2" href="https://www.facebook.com/sharer/sharer.php?u=@articleUrl"> <i class="fab fa-facebook"></i></a>
+            </div>
+        </div>
+
+    </footer>
+
+</article>
+
+<!--relacionar articulos-->
+
+@if(relatedArticles !=null && relatedArticles.Count > 0){
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h2>Related Articles</h2>
+                <div class ="card-deck">
+                    @foreach(var article in relatedArticles){
+                        <!--render las news card-->
+                        
+                        
+                    <!--traigo la image cropper, importo value convertors-->
+                    var relatedImgCropper = article.Value<ImageCropperValue>("articleImage");
+                    <!--accedo a la imagen Thumb-->
+                    var thumbUrl = relatedImgCropper.Src + relatedImgCropper.GetCropUrl("Thumb");
+                    
+                    
+                    
+                     <!-- codigo traido de bootstrap card-->
+                    <div class="card" style="width: 18rem;">
+                        <img class="card-img-top" src="@thumbUrl" alt="Card image cap">
+                         <div class="card-body">
+                            <h5 class="card-title">@article.Name</h5>
+                            <p class="card-text">@article.Value("LeadIn")</p>
+                            
+                         </div>
+                         
+                         <div class= "card-footer d-flex justify-content-between">
+                             <div>
+                                 <a href="@article.Url">Leer mas..</a>
+                             </div>
+                             <div class= "social-icons text-muted">
+                                 <a class= "ml-2 mr-2" href="https://twitter.com/intent/tweet?text=@article.Value("leadIn")&amp;url=@article.Url(null,UrlMode.Absolute)">
+                                 <i class="fab fa-twitter"></i>
+                                 </a>
+                                 
+                                  <a class="ml-2 mr-2" href="https://www.facebook.com/sharer.php?u=@article.Url(null, UrlMode.Absolute)">
+                                 <i class="fab fa-facebook"></i>
+                                 </a>
+                                 
+                                  <a class="ml-2 mr-2" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=@article.Url(null, UrlMode.Absolute)">
+                                 <i class="fab fa-linkedin"></i>
+                                 </a>
+                                 
+                             </div>
+                             
+                             
+                         </div>
+                    </div>
+                        
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+
+

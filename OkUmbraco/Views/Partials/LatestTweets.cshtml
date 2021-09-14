@@ -1,0 +1,49 @@
+﻿@model OkUmbraco.Core.ViewModel.TwitterViewModel
+    @*tipo de datatype de model y que me renderize lo que es en el model*@
+@*@{ 
+
+    dynamic json = Newtonsoft.Json.JsonConvert.DeserializeObject(Model.Json);
+}*@
+
+
+<h3>Ultimos Tweets de @Model.TwitterHandle</h3>
+@Model.Json
+
+<section class="contanier">
+    <div class="row">
+        <div class="col">
+            <div class="card-deck">
+                @*get the tweets, iterate over each tweet*@
+
+                @*@foreach (var item in json)
+                {
+
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between">
+                            <div>
+                                <div>
+                                    <strong>Ok</strong>
+                                    @@@Model.TwitterHandle
+                                </div>
+                            </div>
+
+                            <div>
+                                <i class="fab fa-twitter fa-2x"
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            @item.full_text
+                        </div>
+
+                        <div class="card-footer">
+
+                        </div>
+
+                    </div>
+                }*@
+
+            </div>
+        </div>
+    </div>
+</section>

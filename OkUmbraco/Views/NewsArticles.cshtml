@@ -1,0 +1,207 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<ContentModels.NewsArticles>
+@using ContentModels = Umbraco.Web.PublishedModels;
+
+<!--para usar el image cropper-->
+@using Umbraco.Core.PropertyEditors.ValueConverters;
+@{
+    Layout = "Main.cshtml";
+}
+
+<!--css: it is declared in Main-->
+@section head
+    {
+    <style>
+        .card-horizontal {
+            display: flex;
+            flex 1 1 auto;
+        }
+
+        .active a {
+            color: white;
+        }
+    </style>
+
+}
+
+
+@{
+    //getting the articles
+    var articles = Umbraco.ContentAtRoot().DescendantsOrSelfOfType("newsArticles").FirstOrDefault();
+
+    //HERO: get me the color from the color picker
+    var heroOverlayColour = Model.Value<string>("heroOverlayColour");
+
+    //me da todas las categorias de los articulos, que son del tipo string[]
+    var tags = articles.Children.Select(w => w.Value<string[]>("newsCategories"));
+
+    var categoryList = new List<string>();
+
+    //news article/news categories/string[sport,tech,etc]
+    foreach (var tagArray in tags)
+    {
+        foreach (var tag in tagArray)
+        {
+            //si la categoria no esta en la lista categoryList, agregarla
+            if (!categoryList.Contains(tag))
+            {
+                categoryList.Add(tag);
+            }
+        }
+    }
+
+    //filtro: news is all the articles 
+    var news= articles.Children;
+
+    //if there is a query, news is the result
+    if (!string.IsNullOrEmpty(Request.QueryString["cat"]))
+    {
+        news = articles.Children.Where(w => w.Value<string[]>("newsCategories").Contains(Request.QueryString["cat"]));
+    }
+
+
+    //pagination: do I need to?
+    //what is my page size?
+    const int pageSize = 2;
+
+    //calculate how many pages would there be
+    var numPages = (int)Math.Ceiling((double)news.Count() / (double)pageSize);
+
+    //what is the currently selected page
+    //initial value of page is selected in 1
+    var selectedPage = 1;
+    if(!string.IsNullOrEmpty(Request.QueryString["page"])){
+        //parse  the result of the request
+        int.TryParse(Request.QueryString["page"], out selectedPage);
+
+        if(selectedPage<=0 ||selectedPage> numPages)
+        {
+            selectedPage = 1;
+        }
+
+    }
+
+    //change news to only display the number of items that are in numPages
+    news = news.Skip((selectedPage - 1) * pageSize).Take(pageSize).ToList();
+}
+
+
+<!--if there is a colour, overwrite the overlay with this colour-->
+
+@if (!string.IsNullOrEmpty(heroOverlayColour))
+{
+    <style>
+        .home-hero > .overlay {
+            background-color: #@heroOverlayColour;
+            opacity: 0.5;
+        }
+    </style>
+
+}
+
+
+<!--render the hero at the top of the page-->
+@Html.Partial("Hero")
+
+
+
+
+<div class="container">
+    <div class="row">
+
+        <!--render the news as cards-->
+        <div class="col-md-8 bg-light p-0">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4 p-0">
+                        <!--render news, order by the date that the article was posted-->
+                        @foreach (var article in news.OrderByDescending(o => o.Value<DateTime>("postDate")))
+                        {
+                            var imgCropper = article.Value<ImageCropperValue>("articleImage");
+                            var imgUrl = imgCropper.Src + imgCropper.GetCropUrl("thumb");
+
+                            <!--render the card-->
+                            <div class="card mt-25 mb-25">
+                                <a class="card-block stretched-link text-decoration-none" href="@article.Url">
+                                    <div class="card-horizontal">
+                                        <div class="img-square-wrapper">
+                                            <img src="@imgUrl" />
+                                        </div>
+
+                                        <div class="card-body">
+                                            <h4 class="card-title pb-25">@article.Name</h4>
+                                            <p class="card-text">@article.Value("leadIn")</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        }
+
+
+                    </div>
+                </div>
+
+                <!--render the paging code-->
+                @if (numPages > 1)
+            {
+                <div class="row">
+                    <div class="col">
+                        <nav aria-label="Page Nav">
+                            <ul class="Pagination">
+                                <!--previous-->
+                                <!--disabled previous if there is not previous page-->
+                                <li class="page-item @(selectedPage <=1 ? "disabled" : "")"><a class="page-link" href="@(Model.Url + "?page=" + (selectedPage -1))">Previous</a></li>
+
+                                <!--dinamic-->
+                                @for (int i = 1; i <= numPages; i++)
+                                {
+                                    //agrego css active class to the page that is selected
+                                    <li class="page-item @(selectedPage == i ? "active" : "")"><a class="page-link" href="@(Model.Url + "?page=" + i)">@i</a></li>
+                                }
+
+
+
+
+                                <!--next-->
+                                <!--disabled next if there is not next page-->
+                                <li class="page-item @(selectedPage >=numPages ? "disabled" :"")"><a class="page-link" href="@(Model.Url + "?page=" + (selectedPage +1))">Next</a></li>
+
+
+                            </ul>
+                        </nav>
+
+
+
+                    </div>
+                </div>
+            }
+
+            </div>
+
+        </div>
+
+        <!--render the filters in the sider bar-->
+        <div class="col-md-4 bg-dark text-white text-center">
+            <h3>Categories</h3>
+            <ul>
+                <!--por cada category in categoryList-->
+                @foreach (var category in categoryList.OrderBy(o => o))
+                {
+                    //indication of what filter I am using: 
+                    var activeClass = "";
+
+                    //if its selected, will have a css class active
+                    if(category == Request.QueryString["cat"])
+                    {
+                        activeClass = "active";
+                    }
+
+                    //I will apply the css class to my category
+                    <li class="@activeClass"><a href="@Model.Url?cat=@category">@category</a></li>
+                }
+
+                <!--path to the initial state-->
+                <a href ="@Model.Url" class="btn btn-primary">Clear filter</a>
+            </ul>
+        </div>
+    </div>
+</div>

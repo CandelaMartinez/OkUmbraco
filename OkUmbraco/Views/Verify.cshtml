@@ -1,0 +1,7 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<ContentModels.Verify>
+@using ContentModels = Umbraco.Web.PublishedModels;
+@{
+	Layout = "Main.cshtml";
+}
+
+@Html.Action("RenderEmailVerification","Register")

@@ -1,0 +1,24 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoViewPage<ContentModels.ContentPage>
+@using ContentModels = Umbraco.Web.PublishedModels;
+@{
+	Layout = "Main.cshtml";
+	
+	var heroOverlayColour = Model.Value<string>("heroOverlayColour");
+}
+
+@if(!string.IsNullOrEmpty(heroOverlayColour)){
+    <style>
+        .home-hero > .overlay {
+            background-color: #@heroOverlayColour;
+            opacity: 0.5;
+        }
+    </style>
+
+}
+
+@Html.Partial("Hero")
+
+
+
+<!--render the content of the grid-->
+@Html.GetGridHtml(Model, "contentGrid")

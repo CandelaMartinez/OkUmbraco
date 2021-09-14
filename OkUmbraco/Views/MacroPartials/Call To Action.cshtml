@@ -1,0 +1,27 @@
+﻿@inherits Umbraco.Web.Macros.PartialViewMacroPage
+<!--recogo los parametros que cree-->
+@{
+    var ctaTitle = Model.MacroParameters["cTATitle"] as string;
+    var ctaText = Model.MacroParameters["cTAText"] as string;
+    var ctaLinkUdi = Model.MacroParameters["cTALink"];//devuelve un UDI
+    var linkContent = Umbraco.Content (ctaLinkUdi);//umbraco me dice el contenido de ese UDI
+}
+
+<section class="bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col text-center py-5">
+                <h1 class="display-4">@ctaTitle</h1>
+                <p class="lead">@ctaText</p>
+                <!-- Button o Link  para el call to action. codigo que umbraco recomienda usar con el multipicker-->
+                @{
+                    
+                    if (linkContent != null)
+                    {
+                        <a href="@linkContent.Url"  class="btn btn-outline-secondary">@linkContent.Name</a>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</section>
